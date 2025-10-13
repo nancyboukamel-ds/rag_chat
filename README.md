@@ -86,7 +86,7 @@ DB_NAME=rag_voice_db
 
 ---
 
-## 🖥️ Running the App
+## Running the App
 
 ### Start the FastAPI backend
 
@@ -111,7 +111,7 @@ Frontend will run on: `http://localhost:8501`
 
 ---
 
-## 🧠 RAG Architecture Overview
+## RAG Architecture Overview
 
 ```
 User Query ─┬──────────────┐

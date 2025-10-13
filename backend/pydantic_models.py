@@ -14,3 +14,12 @@ class QueryResponse(BaseModel):
     answer:str
     session_id:str
     model:ModelName
+
+class DocumentInfo(BaseModel):
+    id:str
+    filename:str
+    upload_timestamp: datetime
+
+
+class DeleteFileRequest(BaseModel):
+    file_id:str

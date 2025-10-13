@@ -84,8 +84,55 @@ def chat_file_ui():
 
 def list_all_files_ui():
     st.header("📂 List All Files")
-    st.write("This will display all uploaded/indexed files.") 
 
+    if "reload_flag" not in st.session_state:
+        st.session_state.reload_flag = False
+
+    try:
+        response=requests.get(f"{BACKEND_URL}/list-docs")
+        if response.status_code==200:
+            all_documents=response.json()
+            if not all_documents:
+                st.info('No documents uploaded yet.')
+                return
+            for doc in all_documents:
+                col1, col2, col3 = st.columns([3, 3, 1])
+
+                with col1:
+                    st.write(f"**📄 {doc['filename']}**")
+
+                with col2:
+                    st.write(f"🕒 Uploaded: {doc['upload_timestamp']}")
+
+                with col3:
+                    delete_button = st.button(
+                        "🗑️ Delete",
+                        key=f"delete_{doc['id']}"
+                    )
+
+                if delete_button:
+                    with st.spinner(f"Deleting {doc['filename']}..."):
+                        delete_response = requests.post(
+                            f"{BACKEND_URL}/delete-doc",
+                            json={"file_id": doc["id"]}
+                        )
+
+                        if delete_response.status_code == 200:
+                            st.success(f"Deleted: {doc['filename']}")
+                            st.session_state.reload_flag=True
+                            st.rerun()
+                        else:
+                            st.error(
+                                f"Failed to delete {doc['filename']}: {delete_response.text}"
+                            )
+        else:
+            return f"Error {response.status_code}:{response.text}"
+    except Exception as e:
+        return f"Exception: {e}" 
+
+    if st.session_state.reload_flag:
+        st.session_state.reload_flag = False
+        st.rerun()
 
 def main():
     st.set_page_config(page_title='Document App',layout='centered')

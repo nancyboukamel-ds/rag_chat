@@ -15,3 +15,9 @@ requests
 sentence-transformers
 python-multipart
 uvicorn
+pymongo
+unstructured
+speechrecognition
+python-dotenv
+pydantic
+transformers

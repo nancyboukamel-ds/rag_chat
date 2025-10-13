@@ -1,8 +1,11 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from backend.chroma_utils import index_document_to_chroma
+from backend.pydantic_models import QueryInput,QueryResponse
+from backend.langchain_utils import get_rag_chain_no_history
 import os
 import shutil
 import logging
+import uuid
 
 # Set up logging
 logging.basicConfig(filename='app.log', level=logging.INFO)
@@ -38,3 +41,21 @@ def upload_and_index_document(file:UploadFile=File(...)):
     finally:
         if os.path.exists(tmp_file_path):
             os.remove(tmp_file_path)
+
+
+@app.post('/chat',response_model=QueryResponse)
+def chat(query_input:QueryInput):
+    session_id=query_input.session_id  or str(uuid.uuid4())
+    logging.info(f"Session ID: {session_id}, User Query: {query_input.question} Model: {query_input.model.value}")
+
+    rag_chain=get_rag_chain_no_history(query_input.model.value)
+    answer=rag_chain.invoke({"input": query_input.question})['answer']
+
+    print('Answer is: ',answer)
+    query_response=QueryResponse(
+        answer=answer,
+        session_id=session_id,
+        model=query_input.model
+    )
+
+    return query_response

@@ -1,0 +1,17 @@
+streamlit
+pandas
+numpy
+fastapi
+langchain
+langchain-community
+langchain-chroma
+langchain-google-genai
+langchain-huggingface
+langchain-text-splitters
+pypdf
+docx2txt
+chromadb
+requests
+sentence-transformers
+python-multipart
+uvicorn

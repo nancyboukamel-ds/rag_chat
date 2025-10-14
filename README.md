@@ -1,4 +1,4 @@
-# RAG Voice App — Document Management & Chatbot System
+# RAG Chat App — Document Management & Chatbot System
 
 This project is a **Retrieval-Augmented Generation (RAG)**-powered chatbot built with **LangChain**, **Google Gemini**, **ChromaDB**, and **FastAPI**, combined with a **Streamlit frontend** for document management and chat interactions.
 

@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongodb_doc_app
+    restart: always
+    environment:
+      # ERROR 1 FIXED: Removed the extra '$'
+      MONGO_INITDB_DATABASE: ${DB_NAME} 
+    volumes:
+      - mongo-data:/data/db 
+    ports:
+      - "27017:27017"
+
+  backend:
+    build:
+      # ERROR 3 FIXED: Added the required context
+      context: . 
+      dockerfile: Dockerfile.backend
+    container_name: fastapi-backend-rag
+    restart: on-failure
+    ports:
+      - "8000:8000"
+    environment:
+      # Note: 'mongo' is the service name/hostname within the Docker network
+      DB_URI: mongodb://mongo:27017/${DB_NAME}
+      DB_NAME: ${DB_NAME}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      RETRIEVER_K: ${RETRIEVER_K}
+    
+    depends_on:
+      # ERROR 2 FIXED: Changed 'mongodb' to the correct service name 'mongo'
+      - mongo 
+
+    volumes:
+      - ./data/chroma_db:/app/backend/data/chroma_db
+      - ./data/documents:/app/backend/data/documents 
+      - ./app.log:/app/backend/app.log
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: streamlit_frontend_ui
+    ports:
+      - "8501:8501"
+    environment:
+      # Uses the service name 'backend' to connect to FastAPI
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:

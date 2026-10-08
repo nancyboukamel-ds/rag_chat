@@ -159,4 +159,3 @@ User Query ─┬──────────────┐
 * **Vector Store:** ChromaDB
 * **Language:** Python 3.10+
 
-Would you like me to include a short **“delete flow diagram”** in Markdown (showing what happens when you click delete)? It makes the README even clearer for contributors.
